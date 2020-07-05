@@ -1,4 +1,5 @@
 #Code du rover, qui recevra des ordres ou des demandes d'un ordinateur
+"""
 import socket
 
 #TODO: IP localhost a changer lorsqu'on saura l'IP du robot.
@@ -23,3 +24,33 @@ while True:
     # controle des moteurs (roues et bras)
     connection.send(data)
 connection.close()
+"""
+
+from vidgear.gears import CamGear
+from vidgear.gears import NetGear
+
+# Open live video stream on webcam at first index(i.e. 0) device
+webcamStream = CamGear(source=0).start()
+
+# retrieve framerate from CamGear Stream and pass it as `-input_framerate` parameter
+output_params = {"-input_framerate":webcamStream.framerate}
+
+server = NetGear() #Define netgear server with default settings
+
+# loop over
+while True:
+    try:
+        # read frames from stream
+        frame = webcamStream.read()
+
+        # check for frame if None-type
+        if frame is None:
+            break
+
+        server.send(frame)
+
+    except KeyboardInterrupt:
+        #break the infinite loop
+        break
+
+webcamStream.stop()
