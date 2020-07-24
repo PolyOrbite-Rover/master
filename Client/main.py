@@ -20,13 +20,38 @@ data = s.recv(1024)
 #TODO envoyer les informations sur l'interface
 print('Message du serveur: ', repr(data))""
 """
-
 from vidgear.gears import NetGear
+from tkinter import *
+from PIL import Image
+
+import numpy as np
 import cv2
 
-#define netgear client with `receive_mode = True` and default settings
+#fonctions
+def show_stream(webcam_frame):
+    webcam_frame = cv2.flip(webcam_frame, 1)
+    cv2image = cv2.cvtColor(webcam_frame, cv2.COLOR_BGR2RGBA)
+    img = Image.fromarray(cv2image)
+    imgtk = ImageTk.PhotoImage(image=img)
+    lmain.imgtk = imgtk
+    lmain.configure(image=imgtk)
+    lmain.after(10, show_frame)
+#classes
+
+#Initalisation de l'interface et des connexion
+interface = Tk()
+interface.wm_title("Interface du Rover")
+interface.config(background="#FFFFFF")
+
+#Initialisation du visionnement de la webcam dans l'interface
+webcam_stream = Frame(interface, width=600, height=500)
+webcam_stream.grid(row=0, column=0, padx=10, pady=2)
+
+##define netgear client with `receive_mode = True` and default settings
 client = NetGear(receive_mode = True)
 
+
+print("debut de stream dans le client...")
 # infinite loop
 while True:
     # receive frames from network
@@ -38,9 +63,10 @@ while True:
         break
 
     # do something with frame here
+    show_stream(frame)
 
     # Show output window
-    cv2.imshow("Output Frame", frame)
+    #cv2.imshow("Output Frame", frame)
 
     key = cv2.waitKey(1) & 0xFF
     # check for 'q' key-press
@@ -48,6 +74,7 @@ while True:
         #if 'q' key-pressed break out
         break
 
+print("fin de stream provenant du serveur")
 # close output window
 cv2.destroyAllWindows()
 # safely close client

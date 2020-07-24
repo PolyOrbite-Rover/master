@@ -36,7 +36,7 @@ webcamStream = CamGear(source=0).start()
 output_params = {"-input_framerate":webcamStream.framerate}
 
 server = NetGear() #Define netgear server with default settings
-
+print("envoie du stream...")
 # loop over
 while True:
     try:
@@ -53,4 +53,5 @@ while True:
         #break the infinite loop
         break
 
+print("fin du stream")
 webcamStream.stop()
